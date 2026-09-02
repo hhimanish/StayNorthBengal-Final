@@ -1,0 +1,164 @@
+// prisma/schema.prisma
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Enums removed for SQLite – using plain string fields.
+// enum Role { GUEST, HOST, TRANSPORT_OPERATOR, GUIDE, SUPER_ADMIN }
+// enum BookingStatus { PENDING, CONFIRMED, CANCELLED }
+// enum CartItemType { STAY, CAB, ACTIVITY }
+// enum TransactionStatus { INITIATED, SUCCESS, FAILED }
+
+
+/// Models
+model User {
+  id        String   @id @default(uuid())
+  email     String?  @unique
+  phone     String?  @unique
+  name      String?
+  role      String   @default("GUEST")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  stays       Stay[]       @relation("HostStays")
+  bookings    Booking[]   @relation("GuestBookings")
+  transactions Transaction[]
+  reviews     Review[]
+  kycDocs     KycDocument[]
+  // transportOperator and cabBookings removed per Phase 2
+  cart        Cart? @relation("UserCart")
+
+  @@index([email])
+  @@index([phone])
+  wallet      Wallet?
+}
+
+model Stay {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  address     String
+  latitude    Float
+  longitude   Float
+  hostId      String
+  host        User     @relation("HostStays", fields: [hostId], references: [id])
+  rooms       Room[]
+  reviews     Review[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([latitude, longitude])
+}
+
+model Room {
+  id           String   @id @default(uuid())
+  stayId       String
+  stay         Stay     @relation(fields: [stayId], references: [id])
+  name         String
+  capacity     Int
+  priceCents   Int      // stored as integer for precision
+  inventory    Int      // total rooms of this type
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  bookings     Booking[]
+}
+
+model Booking {
+  id            String          @id @default(uuid())
+  roomId        String
+  room          Room            @relation(fields: [roomId], references: [id])
+  guestId       String
+  guest         User            @relation("GuestBookings", fields: [guestId], references: [id])
+  status        String   @default("PENDING")
+  lockToken     String?         // set when lock acquired
+  lockExpiresAt DateTime?       // 10‑minute expiry
+  checkIn       DateTime
+  checkOut      DateTime
+  totalCents    Int
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+  transaction   Transaction?    @relation("TransactionBooking")
+}
+
+model Transaction {
+  id               String            @id @default(uuid())
+  bookingId        String?           @unique
+  booking          Booking? @relation("TransactionBooking", fields: [bookingId], references: [id])
+  userId           String
+  user             User @relation(fields: [userId], references: [id])
+  razorpayOrderId  String
+  amountCents      Int
+  status           String @default("INITIATED")
+  // payouts removed; payout functionality not required in Phase 2
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+}
+
+model Review {
+  id        String   @id @default(uuid())
+  stayId    String
+  stay      Stay     @relation(fields: [stayId], references: [id])
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  rating    Int      @default(5)
+  comment   String?
+  createdAt DateTime @default(now())
+}
+
+model KycDocument {
+  id           String   @id @default(uuid())
+  userId       String
+  user         User     @relation(fields: [userId], references: [id])
+  url          String   // location in Cloudinary / S3
+  type         String   // e.g., "passport", "business_license"
+  verified     Boolean  @default(false)
+  uploadedAt   DateTime @default(now())
+}
+
+// TransportOperator model removed per Phase 2
+
+// Route model removed per Phase 2
+
+// CabBooking model removed per Phase 2
+
+// Guide related models removed per Phase 2 specification – no guide booking functionality.
+
+
+model Cart {
+  id        String @id @default(uuid())
+  userId    String @unique   // one cart per user
+  user      User @relation("UserCart", fields: [userId], references: [id])
+  items     CartItem[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CartItem {
+  id          String @id @default(uuid())
+  cartId      String
+  cart        Cart @relation(fields: [cartId], references: [id])
+  type        String
+  referenceId String // points to Stay.id, Route.id, GuideSlot.id
+  quantity    Int @default(1)
+  priceCents  Int
+  createdAt   DateTime @default(now())
+}
+
+// Payout model removed per Phase 2
+
+// New Wallet model for instant payouts
+model Wallet {
+  id           String   @id @default(uuid())
+  userId       String   @unique
+  user         User @relation(fields: [userId], references: [id])
+  balanceCents Int @default(0)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}

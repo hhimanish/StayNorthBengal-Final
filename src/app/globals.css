@@ -1,0 +1,9 @@
+/* src/app/globals.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Custom utilities */
+.scroll-smooth {
+  scroll-behavior: smooth;
+}
