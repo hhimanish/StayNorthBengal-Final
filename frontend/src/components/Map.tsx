@@ -5,7 +5,7 @@ import './Map.css';
 declare const google: any;
 
 // Vite environment variable for Google Maps API key
-const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY as string || 'YOUR_GOOGLE_MAPS_API_KEY';
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY || 'YOUR_GOOGLE_MAPS_API_KEY';
 
 // Sample sightseeing nodes (expandable later)
 const sights = [

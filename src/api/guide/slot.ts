@@ -1,5 +1,5 @@
 // src/api/guide/slot.ts
-import prisma from '@/src/lib/prisma';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // Create a guide slot (available times for booking)

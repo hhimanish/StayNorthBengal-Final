@@ -1,5 +1,5 @@
 // src/api/transport/operator.ts
-import prisma from '@/src/lib/prisma';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // Register a new transport operator (linked to existing user)

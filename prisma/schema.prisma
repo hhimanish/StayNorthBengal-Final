@@ -12,7 +12,11 @@ datasource db {
 // Enums removed for SQLite – using plain string fields.
 // enum Role { GUEST, HOST, TRANSPORT_OPERATOR, GUIDE, SUPER_ADMIN }
 // enum BookingStatus { PENDING, CONFIRMED, CANCELLED }
-// enum CartItemType { STAY, CAB, ACTIVITY }
+enum CartItemType {
+  STAY
+  CAB
+  ACTIVITY
+}
 // enum TransactionStatus { INITIATED, SUCCESS, FAILED }
 
 
@@ -37,8 +41,23 @@ model User {
 
   @@index([email])
   @@index([phone])
-  wallet      Wallet?
+  // Relations
+  wallet      Wallet? @relation("UserWallet")
+  cabBookings CabBooking[] @relation("UserCabBookings")
+  transportOperator TransportOperator? @relation("UserTransportOperator")
 }
+
+model TransportOperator {
+  id              String   @id @default(uuid())
+  userId          String   @unique
+  user            User     @relation("UserTransportOperator", fields: [userId], references: [id])
+  vehiclePermit   String
+  drivingLicense  String
+  rcDocument      String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+}
+
 
 model Stay {
   id          String   @id @default(uuid())
@@ -128,6 +147,29 @@ model KycDocument {
 
 // CabBooking model removed per Phase 2
 
+model Route {
+  id          String @id @default(uuid())
+  hubFrom    String
+  hubTo      String
+  distanceKm Int
+  priceCents Int
+  cabBookings CabBooking[] @relation("RouteCabBookings")
+
+}
+
+model CabBooking {
+  id            String @id @default(uuid())
+  routeId       String
+  passengerId   String
+  status        String @default("PENDING")
+  lockToken     String?
+  lockExpiresAt DateTime?
+  route        Route   @relation(name: "RouteCabBookings", fields: [routeId], references: [id])
+  passenger    User    @relation(name: "UserCabBookings", fields: [passengerId], references: [id])
+}
+
+// CabBooking model removed per Phase 2
+
 // Guide related models removed per Phase 2 specification – no guide booking functionality.
 
 
@@ -157,7 +199,7 @@ model CartItem {
 model Wallet {
   id           String   @id @default(uuid())
   userId       String   @unique
-  user         User @relation(fields: [userId], references: [id])
+  user         User @relation("UserWallet", fields: [userId], references: [id])
   balanceCents Int @default(0)
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt

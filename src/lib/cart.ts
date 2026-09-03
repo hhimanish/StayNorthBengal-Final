@@ -1,7 +1,13 @@
 // src/lib/cart.ts
-import prisma from '@/src/lib/prisma';
-import redisClient from '@/src/lib/redis';
-import { CartItemType } from '@prisma/client';
+import prisma from '@/lib/prisma';
+import redisClient from '@/lib/redis';
+import { CartItem } from '@prisma/client';
+// Define CartItemType locally as string enum
+export enum CartItemType {
+  STAY = "STAY",
+  CAB = "CAB",
+  ACTIVITY = "ACTIVITY",
+}
 
 const CART_TTL_SECONDS = 24 * 60 * 60; // 24h expiration
 
@@ -19,7 +25,7 @@ export async function getOrCreateCart(userId: string) {
     include: { items: true },
   });
   if (!cart) {
-    cart = await prisma.cart.create({ data: { userId } });
+    cart = await prisma.cart.create({ data: { userId }, include: { items: true } });
   }
   await redisClient.setex(`cart:${userId}`, CART_TTL_SECONDS, JSON.stringify(cart));
   return cart;
@@ -36,9 +42,7 @@ export async function addItemToCart(params: {
   const { userId, type, referenceId, quantity = 1, priceCents } = params;
   const cart = await getOrCreateCart(userId);
   // Check if item already exists
-  const existing = cart.items.find(
-    (i) => i.type === type && i.referenceId === referenceId,
-  );
+  const existing = cart.items.find((i: CartItem) => i.type === type && i.referenceId === referenceId);
   let cartItem;
   if (existing) {
     cartItem = await prisma.cartItem.update({
@@ -65,6 +69,6 @@ export async function removeItemFromCart(params: { userId: string; cartItemId: s
 /** Compute total price for a cart */
 export async function calculateCartTotal(userId: string) {
   const cart = await getOrCreateCart(userId);
-  const total = cart.items.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
+  const total = cart.items.reduce((sum: number, item: CartItem) => sum + item.priceCents * item.quantity, 0);
   return total;
 }

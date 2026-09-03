@@ -1,9 +1,9 @@
 // src/components/ui/button.tsx
-import { motion } from 'framer-motion';
-import React, { ButtonHTMLAttributes, ReactNode } from 'react';
+import { motion, HTMLMotionProps } from 'framer-motion';
+import React, { ReactNode } from 'react';
 import clsx from 'clsx';
 
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonProps extends Omit<HTMLMotionProps<'button'>, 'ref'> {
   children: ReactNode;
   variant?: 'primary' | 'secondary' | 'ghost';
 }

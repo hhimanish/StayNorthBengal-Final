@@ -1,8 +1,8 @@
 // src/api/transport/cabBooking.ts
-import prisma from '@/src/lib/prisma';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { acquireLock, releaseLock } from '@/src/lib/redis';
-import { initiateRazorpayOrder } from '@/src/lib/payment';
+import { acquireLock, releaseLock } from '@/lib/redis';
+import { initiateRazorpayOrder } from '@/lib/payment';
 
 // Create a cab booking (lock then payment)
 export async function POST(request: Request) {

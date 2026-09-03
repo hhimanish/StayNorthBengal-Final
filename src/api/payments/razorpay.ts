@@ -38,7 +38,7 @@ export async function POST(req: NextRequest) {
       bookingId,
       userId,
       razorpayOrderId: order.id,
-      amountCents: order.amount,
+      amountCents: Number(order.amount),
       status: 'INITIATED',
     },
   });

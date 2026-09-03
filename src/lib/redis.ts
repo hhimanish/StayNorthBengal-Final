@@ -3,7 +3,7 @@ import Redis from 'ioredis';
 
 const redisUrl = process.env.REDIS_URL || 'redis://localhost:6379';
 
-let redisClient: Redis.Redis;
+let redisClient: Redis;
 
 if (process.env.NODE_ENV === 'production') {
   redisClient = new Redis(redisUrl);
@@ -19,7 +19,7 @@ import { randomBytes } from 'crypto';
 /** Acquire a Redis lock (SET NX PX) */
 export async function acquireLock(key:string, ttlSeconds:number):Promise<string|null>{
   const token = randomBytes(16).toString('hex');
-  const result = await redisClient.set(key, token, 'NX', 'EX', ttlSeconds);
+  const result = await redisClient.set(key, token, 'EX', ttlSeconds, 'NX');
   return result === 'OK' ? token : null;
 }
 
@@ -35,3 +35,4 @@ export async function releaseLock(key:string, token:string):Promise<boolean>{
   return result === 1;
 }
 
+export default redisClient;

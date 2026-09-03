@@ -1,3 +1,5 @@
+"use client";
+
 // src/app/host/kyc/page.tsx
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';

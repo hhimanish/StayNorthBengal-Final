@@ -1,5 +1,5 @@
 // src/api/transport/route.ts
-import prisma from '@/src/lib/prisma';
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // Create a new route (admin only in real app, omitted for brevity)

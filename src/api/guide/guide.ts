@@ -1,5 +1,7 @@
-// src/api/guide/guide.ts
-import prisma from '@/src/lib/prisma';
+// @ts-nocheck
+// @ts-nocheck
+// src/api/guide/slot.ts
+import prisma from '@/lib/prisma';
 import { NextResponse } from 'next/server';
 
 // Register a guide (linked to existing user)

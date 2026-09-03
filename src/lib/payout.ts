@@ -34,6 +34,6 @@ export async function createRazorpayPayout(amountRupees: number, receipt: string
   } as any;
 
   // Razorpay SDK returns a promise
-  const payout = await razorpay.payouts.create(payoutOptions);
+  const payout = await (razorpay as any).payouts.create(payoutOptions);
   return payout;
 }

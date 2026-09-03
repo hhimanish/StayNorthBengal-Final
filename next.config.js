@@ -1,10 +1,7 @@
 // next.config.js
 module.exports = {
   reactStrictMode: true,
-  experimental: {
-    appDir: true,
-    serverActions: true
-  },
+  // experimental options removed as they are now defaults
   images: {
     remotePatterns: [
       {

@@ -30,3 +30,14 @@ export function verifySignature(body: string, signature: string, secret: string)
   const generated = crypto.createHmac('sha256', secret).update(body).digest('hex');
   return generated === signature;
 }
+
+/**
+ * Initiates a Razorpay order using amount in cents (paise).
+ * @param params.amountCents Amount in cents.
+ * @param params.receipt   Receipt identifier.
+ * @returns The created Razorpay order.
+ */
+export async function initiateRazorpayOrder({ amountCents, receipt }: { amountCents: number; receipt: string }) {
+  const amountRupees = amountCents / 100;
+  return await createRazorpayOrder(amountRupees, receipt);
+}
