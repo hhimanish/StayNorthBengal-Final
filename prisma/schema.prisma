@@ -5,8 +5,8 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
-  url      = "file:./dev.db"
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 // Enums removed for SQLite – using plain string fields.
@@ -36,7 +36,7 @@ model User {
   transactions Transaction[]
   reviews     Review[]
   kycDocs     KycDocument[]
-  // transportOperator and cabBookings removed per Phase 2
+  // transportOperator and cabBookings removed per Phase 2
   cart        Cart? @relation("UserCart")
 
   @@index([email])
@@ -115,7 +115,7 @@ model Transaction {
   razorpayOrderId  String
   amountCents      Int
   status           String @default("INITIATED")
-  // payouts removed; payout functionality not required in Phase 2
+  // payouts removed; payout functionality not required in Phase 2
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 }
@@ -141,11 +141,11 @@ model KycDocument {
   uploadedAt   DateTime @default(now())
 }
 
-// TransportOperator model removed per Phase 2
+// TransportOperator model removed per Phase 2
 
-// Route model removed per Phase 2
+// Route model removed per Phase 2
 
-// CabBooking model removed per Phase 2
+// CabBooking model removed per Phase 2
 
 model Route {
   id          String @id @default(uuid())
@@ -168,9 +168,9 @@ model CabBooking {
   passenger    User    @relation(name: "UserCabBookings", fields: [passengerId], references: [id])
 }
 
-// CabBooking model removed per Phase 2
+// CabBooking model removed per Phase 2
 
-// Guide related models removed per Phase 2 specification – no guide booking functionality.
+// Guide related models removed per Phase 2 specification – no guide booking functionality.
 
 
 model Cart {
@@ -193,7 +193,7 @@ model CartItem {
   createdAt   DateTime @default(now())
 }
 
-// Payout model removed per Phase 2
+// Payout model removed per Phase 2
 
 // New Wallet model for instant payouts
 model Wallet {
