@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "seed": "node prisma/seed.ts",
     "start": "next start",
-    "lint": "next lint",
+    "prisma": { "seed": "node prisma/seed.ts" },
     "typecheck": "tsc --noEmit",
     "prisma": "prisma",
     "postinstall": "prisma generate"
