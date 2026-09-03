@@ -1,3 +1,5 @@
+"use client";
+
 // src/components/ui/button.tsx
 import { motion, HTMLMotionProps } from 'framer-motion';
 import React, { ReactNode } from 'react';

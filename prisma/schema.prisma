@@ -12,11 +12,11 @@ datasource db {
 // Enums removed for SQLite – using plain string fields.
 // enum Role { GUEST, HOST, TRANSPORT_OPERATOR, GUIDE, SUPER_ADMIN }
 // enum BookingStatus { PENDING, CONFIRMED, CANCELLED }
-enum CartItemType {
-  STAY
-  CAB
-  ACTIVITY
-}
+// enum CartItemType {
+//   // STAY
+//   // CAB
+//   // ACTIVITY
+// }
 // enum TransactionStatus { INITIATED, SUCCESS, FAILED }
 
 

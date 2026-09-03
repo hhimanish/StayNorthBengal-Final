@@ -1,3 +1,5 @@
+"use client";
+
 // src/components/PayoutModal.tsx
 
 import { useState } from 'react';
